@@ -60,7 +60,7 @@ do
         # Check the SERVER BATCH for a PICKUP file.
         # If there is no PICKUP file, try again later.
         copy $server_batch/_batch/pickup $client_batch/_batch/pickup 2> /dev/null
-        if [[ $(copy $server_batch/_batch/pickup $client_batch/_batch/pickup 2> /dev/null) ]]; then
+        if [[ `copy $server_batch/_batch/pickup $client_batch/_batch/pickup 2> /dev/null && ls $client_batch/_batch/pickup 2> /dev/null` ]]; then
             echo "Downloading Batch \"$batch_name\""
             # Add a DOWNLOAD file to the CLIENT BATCH.
             echo $server_batch > $client_batch/_batch/download
