@@ -3,7 +3,7 @@ server_dir=$2 # user@host:path/to/batches
 identity=$3 # ssh identity file needed to scp to server
 
 copy () {
-    if [ $identity ]; then
+    if [ -n $identity ]; then
         scp -i $identity -v $*
     elif [[ $server_dir == *":"* ]]; then
         scp -v $*
@@ -41,7 +41,7 @@ do
         # Remove READY file from CLIENT BATCH.
         rm -rf $client_batch/ready
         # Copy the CLIENT BATCH folder to SERVER BATCH.
-        cp -r $client_batch/. $server_batch
+        copy -r $client_batch/. $server_batch
         # Add an EXECUTE file to the CLIENT BATCH.
         date > $client_batch/.batchy/execute
         # COPY the EXECUTE file to the SERVER BATCH (triggers execution).
