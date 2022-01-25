@@ -4,7 +4,8 @@ remove_after=$2 # seconds after which to remove a delivered batch
 have_seconds_elapsed () {
     local since=$1
     local limit=$2
-    if python3 -c "import datetime; import re; [year,month,day,time,nano] = \"$1\".strip().split(\"-\"); [hour,minute,second,ignore] = re.split(\"[hms]\", time); datediff = datetime.datetime.now() - datetime.datetime(int(year),int(month),int(day),int(hour),int(minute),int(second)); seconds_elapsed = datediff.total_seconds(); exit(0 if seconds_elapsed > $2 else 1);"; then
+
+    if python -c "from datetime import datetime; since = datetime.strptime(\"$(date)\", \"%a %b %d %H:%M:%S %Z %Y\")); datediff = datetime.datetime.now() - since; seconds_elapsed = datediff.total_seconds(); exit(0 if seconds_elapsed > $2 else 1);"; then
         return 0
     else
         return 1
