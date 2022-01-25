@@ -5,7 +5,7 @@ have_seconds_elapsed () {
     local since=$1
     local limit=$2
 
-    if python3 -c "from datetime import datetime; since = datetime.strptime(\"$(since)\", \"%a %b %d %H:%M:%S %Z %Y\"); datediff = datetime.now() - since; seconds_elapsed = datediff.total_seconds(); exit(0 if seconds_elapsed > $2 else 1);"; then
+    if python3 -c "from datetime import datetime; since = datetime.strptime(\"$since\", \"%a %b %d %H:%M:%S %Z %Y\"); datediff = datetime.now() - since; seconds_elapsed = datediff.total_seconds(); exit(0 if seconds_elapsed > $2 else 1);"; then
         return 0
     else
         return 1
