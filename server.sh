@@ -44,7 +44,7 @@ do
             # A SERVER BATCH is found containing a DELIVERED file.
             batch=$(dirname `dirname $delivered`)
             delivered_at=`head -1 $batch/_batch/delivered`
-            if have_seconds_elapsed $delivered_at $remove_after; then
+            if have_seconds_elapsed "$delivered_at" $remove_after; then
                 echo "Removing $batch"
                 # Remove SERVER BATCH.
                 rm -rf $batch
