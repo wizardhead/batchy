@@ -1,4 +1,15 @@
 server_dir=$1 # path/to/batches
+remove_after=$2 # seconds after which to remove a delivered batch
+
+have_seconds_elapsed () {
+    local since=$1
+    local limit=$2
+    if python3 -c "import datetime; import re; [year,month,day,time,nano] = \"$1\".strip().split(\"-\"); [hour,minute,second,ignore] = re.split(\"[hms]\", time); datediff = datetime.datetime.now() - datetime.datetime(int(year),int(month),int(day),int(hour),int(minute),int(second)); seconds_elapsed = datediff.total_seconds(); exit(0 if seconds_elapsed > $2 else 1);"; then
+        return 0
+    else
+        return 1
+    fi
+}
 
 while true;
 do
@@ -24,14 +35,21 @@ do
         date > $batch/_batch/pickup
     done
 
+    # As a safety measure, only when remove_after is set should we remove
+    # delivered batches.
+    if [ -n "$remove_after" ]; then
+        for delivered in `ls -1 $server_dir/*/_batch/delivered 2> /dev/null`
+        do
+            # A SERVER BATCH is found containing a DELIVERED file.
+            batch=$(dirname `dirname $delivered`)
+            delivered_at=`head -1 $batch/_batch/delivered`
+            if have_seconds_elapsed $delivered_at $remove_after; then
+                echo "Removing $batch"
+                # Remove SERVER BATCH.
+                rm -rf $batch
+            fi
+        done
+    fi
     # Clean up delivered batches
-    for delivered in `ls -1 $server_dir/*/_batch/delivered 2> /dev/null`
-    do
-        # A SERVER BATCH is found containing a DELIVERED file.
-        batch=$(dirname `dirname $delivered`)
-        echo "Removing $batch"
-        # Remove the SERVER BATCH.
-        rm -rf $batch
-    done
     sleep 5
 done
