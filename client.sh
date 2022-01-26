@@ -37,17 +37,17 @@ do
         rm -rf $client_batch/output
         # Add an UPLOAD file to the CLIENT BATCH.
         echo $server_batch > $client_batch/_batch/upload
-        date >> $client_batch/_batch/upload
+        date -u >> $client_batch/_batch/upload
         # Remove READY file from CLIENT BATCH.
         rm -rf $client_batch/ready
         # Copy the CLIENT BATCH folder to SERVER BATCH.
         copy -r $client_batch $server_batch
         # Add an EXECUTE file to the CLIENT BATCH.
-        date > $client_batch/_batch/execute
+        date -u > $client_batch/_batch/execute
         # COPY the EXECUTE file to the SERVER BATCH (triggers execution).
         copy $client_batch/_batch/execute $server_batch/_batch/execute
         # Add a WAIT file to the CLIENT BATCH.
-        date > $client_batch/_batch/wait
+        date -u > $client_batch/_batch/wait
     done
 
     # Download __pickup batches
@@ -64,13 +64,13 @@ do
             echo "Downloading Batch \"$batch_name\""
             # Add a DOWNLOAD file to the CLIENT BATCH.
             echo $server_batch > $client_batch/_batch/download
-            date >> $client_batch/_batch/download
+            date -u >> $client_batch/_batch/download
             # Remove the WAIT file from the CLIENT BATCH.
             rm $client_batch/_batch/wait
             # COPY the OUTPUT from the SERVER BATCH to the CLIENT BATCH.
             copy -r $server_batch/output $client_batch/
             # Add a DELIVERED file to the CLIENT BATCH.
-            date > $client_batch/_batch/delivered
+            date -u > $client_batch/_batch/delivered
             # COPY the DELIVERED file to the SERVER BATCH.
             copy $client_batch/_batch/delivered $server_batch/_batch/delivered
         fi

@@ -28,12 +28,12 @@ do
         rm -rf $batch/output 2> /dev/null
         mkdir -p $batch/output
         # Run the COMMAND file and record its stdout to a LOG file in its OUTPUT folder.
-        echo Execution Start: $(date) >> $batch/output/log
+        echo Execution Start: $(date -u) >> $batch/output/log
         cat $batch/command.sh >> $batch/output/log
         (cd $batch && time bash command.sh) 2>&1 | tee -a $batch/output/log
-        echo Execution Finish: $(date) >> $batch/output/log
+        echo Execution Finish: $(date -u) >> $batch/output/log
         # Add a PICKUP file to the SERVER BATCH.
-        date > $batch/_batch/pickup
+        date -u > $batch/_batch/pickup
     done
 
     # As a safety measure, only when remove_after is set should we remove
