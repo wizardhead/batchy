@@ -4,9 +4,9 @@ identity=$3 # ssh identity file needed to scp to server
 
 copy () {
     if [ -n $identity ]; then
-        scp -i $identity $*
+        rsync -avz --progress -i $identity $*
     elif [[ $server_dir == *":"* ]]; then
-        scp $*
+        scp -azv --progress $*
     else
         cp -v $*
     fi
