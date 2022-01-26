@@ -36,6 +36,26 @@ do
         date -u > $batch/_batch/pickup
     done
 
+    # Resume batches
+    for resume in `ls -1 $server_dir/*/_batch/resume 2> /dev/null`
+    do
+        # A SERVER BATCH is found containing an RESUME file.
+        batch=$(dirname `dirname $resume`)
+        batch_name=`basename $batch`
+        echo "Resuming $batch"
+        # Remove RESUME file from SERVER BATCH.
+        rm $batch/_batch/resume
+        # Make sure OUTPUT folder is present in SERVER BATCH but do not remove old one.
+        mkdir -p $batch/output
+        # Run the COMMAND file and record its stdout to a LOG file in its OUTPUT folder.
+        echo Execution Resumed: $(date -u) >> $batch/output/log
+        cat $batch/command.sh >> $batch/output/log
+        (cd $batch && time bash command.sh) 2>&1 | tee -a $batch/output/log
+        echo Execution Finish: $(date -u) >> $batch/output/log
+        # Add a PICKUP file to the SERVER BATCH.
+        date -u > $batch/_batch/pickup
+    done
+
     # As a safety measure, only when remove_after is set should we remove
     # delivered batches.
     if [ -n "$remove_after" ]; then
