@@ -4,9 +4,9 @@ identity=$3 # ssh identity file needed to scp to server
 
 copy () {
     if [ -n $identity ]; then
-        rsync -avz --progress -i $identity $*
+        rsync -advz --progress -i $identity $*
     elif [[ $server_dir == *":"* ]]; then
-        scp -azv --progress $*
+        rsync -adzv --progress $*
     else
         cp -v $*
     fi
@@ -41,7 +41,7 @@ do
         # Remove READY file from CLIENT BATCH.
         rm -rf $client_batch/ready
         # Copy the CLIENT BATCH folder to SERVER BATCH.
-        copy -r $client_batch $server_batch
+        copy -r $client_batch/ $server_batch/
         # Add an EXECUTE file to the CLIENT BATCH.
         date -u > $client_batch/_batch/execute
         # COPY the EXECUTE file to the SERVER BATCH (triggers execution).
@@ -60,7 +60,7 @@ do
         # Check the SERVER BATCH for a PICKUP file.
         # If there is no PICKUP file, try again later.
         copy $server_batch/_batch/pickup $client_batch/_batch/pickup 2> /dev/null
-        if [[ `copy $server_batch/_batch/pickup $client_batch/_batch/pickup 2> /dev/null && ls $client_batch/_batch/pickup 2> /dev/null` ]]; then
+        if [ -f "$client_batch/_batch/pickup" ]; then
             echo "Downloading Batch \"$batch_name\""
             # Add a DOWNLOAD file to the CLIENT BATCH.
             echo $server_batch > $client_batch/_batch/download
@@ -68,7 +68,7 @@ do
             # Remove the WAIT file from the CLIENT BATCH.
             rm $client_batch/_batch/wait
             # COPY the OUTPUT from the SERVER BATCH to the CLIENT BATCH.
-            copy -r $server_batch/output $client_batch/
+            copy -r $server_batch/output/ $client_batch/output/
             # Add a DELIVERED file to the CLIENT BATCH.
             date -u > $client_batch/_batch/delivered
             # COPY the DELIVERED file to the SERVER BATCH.
